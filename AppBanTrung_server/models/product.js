@@ -14,11 +14,11 @@ const productSchema = mongoose.Schema({
         type:String,
         default:''
     },
-    Anh: {
+    Image: {
         type: String,
         default:''
     },
-    BoAnh:[{
+    Images:[{
         type:String
     }],
     ThuongHieu:{
@@ -38,7 +38,7 @@ const productSchema = mongoose.Schema({
     type:Number,
        required:true,
        min :0,
-       max:255
+       max:100000
     },
     XepHang:{
         type:Number,
