@@ -4,7 +4,7 @@ const {Category} = require('../models/category');
 
 router.get(`/`, (req,res)=>{
      Category.find().then(categoryList=>{
-        if(!categoryList){
+        if(categoryList.length <= 0){
          return   res.status(404).json({
                 success:false,
                 message:' '
