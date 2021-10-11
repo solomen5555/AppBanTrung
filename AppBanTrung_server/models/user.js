@@ -7,7 +7,8 @@ const userSchema = mongoose.Schema({
     },
     TaiKhoan:{
         type:String,
-        required:true
+        required:true,
+        unique:true
     },
     MatKhau:{
         type:String,

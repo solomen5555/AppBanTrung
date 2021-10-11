@@ -10,8 +10,8 @@ function authJwt(){
     }).unless({
         path:[
             {url:/\/public\/uploads(.*)/,method:['GET','OPTIONS'] } ,
-           {url:/\/api\/v1\/products(.*)/,method:['GET','OPTIONS'] } ,
-           {url:/\/api\/v1\/categories(.*)/,method:['GET','OPTIONS'] } ,
+           {url:/\/trungtinhyeu\/api\/products(.*)/,method:['GET','OPTIONS'] } ,
+           {url:/\/trungtinhyeu\/api\/categories(.*)/,method:['GET','OPTIONS'] } ,
            `${api}/users/login`,
            `${api}/users/register`,
           
