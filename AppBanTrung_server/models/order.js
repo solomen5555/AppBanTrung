@@ -6,22 +6,11 @@ const orderSchema = mongoose.Schema({
         ref:'OrderItem',
         required:true
     }],
-    DiaChiGiaoHang1:{
+    DiaChiGiaoHang:{
         type:String,
         required:true
-    },
-    DiaChiGiaoHang2:{
-        type:String,
-    },
-    TinhTP:{
-        type:String,
-        required:true,
     },
     MaBuuDien:{
-        type:String,
-        required:true
-    },
-    DatNuoc:{
         type:String,
         required:true
     },

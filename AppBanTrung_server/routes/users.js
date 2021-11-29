@@ -81,10 +81,14 @@ router.post(`/register`, (req,res)=>{
         MatKhau:bcrypt.hashSync(req.body.MatKhau,10),
         SoDienThoai:req.body.SoDienThoai,
         isAdmin:req.body.isAdmin,
+        DiaChiGiaoHang1:req.body.DiaChiGiaoHang1,
+        DiaChiGiaoHang2:req.body.DiaChiGiaoHang2,
         DiaChi:req.body.DiaChi,
         MaBuuDien:req.body.MaBuuDien,
+        PhuongXa:req.body.PhuongXa,
+        QuanHuyen:req.body.QuanHuyen,
         TinhTP:req.body.TinhTP,
-        DatNuoc:req.body.DatNuoc
+        
     })
 
       user.save().then(user=>{

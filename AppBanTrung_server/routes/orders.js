@@ -125,11 +125,8 @@ router.post(`/`, async (req,res)=>{
 
     let order = new Order({
         DsSanPham:DsSanPham1,
-        DiaChiGiaoHang1:req.body.DiaChiGiaoHang1,
-        DiaChiGiaoHang2:req.body.DiaChiGiaoHang2,
-        TinhTP:req.body.TinhTP,
+        DiaChiGiaoHang:req.body.DiaChiGiaoHang,
         MaBuuDien:req.body.MaBuuDien,
-        DatNuoc:req.body.DatNuoc,
         SoDienThoai:req.body.SoDienThoai,
         TrangThai:req.body.TrangThai,
         TongTien:TongTien1,

@@ -1,0 +1,1 @@
+export const Base_Url ='https://app-ban-trung-server.herokuapp.com/trungtinhyeu/api'

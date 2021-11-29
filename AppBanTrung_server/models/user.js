@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const userSchema = mongoose.Schema({
     Ten:{
         type:String,
-        required:true
+        required:false,
+        default:''
     },
     TaiKhoan:{
         type:String,
@@ -22,11 +23,27 @@ const userSchema = mongoose.Schema({
         type:Boolean,
         default:false
     },
+    DiaChiGiaoHang1:{
+        type:String,
+        default:''
+    },
+    DiaChiGiaoHang2:{
+        type:String,
+        default:''
+    },
     DiaChi:{
         type:String,
         default:''
     },
     MaBuuDien:{
+        type:String,
+        default:''
+    },
+    PhuongXa:{
+        type:String,
+        default:''
+    },
+    QuanHuyen:{
         type:String,
         default:''
     },

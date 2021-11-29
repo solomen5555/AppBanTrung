@@ -12,9 +12,11 @@ import { AntDesign } from '@expo/vector-icons';
 
 import Banner from './components/Banner';
 import ProductFilter from './components/ProdctFilter';
+import { Header } from '../../components'
 
 const data = require('../../assets/data/products.json');
 const category = require('../../assets/data/categories.json')
+
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 
@@ -42,10 +44,10 @@ const ProductContainer = () => {
 
     }, [])
 
-    console.log('isFilter', isFilter)
+  //  console.log('isFilter', isFilter)
 
     const searchProduct = keyword => {
-        console.log('keyword', keyword)
+      //  console.log('keyword', keyword)
         if (keyword != null) {
             let newArray = productsFilter.filter((value, key) => {
                 let stringSum = `${value.Ten}`;
@@ -86,11 +88,12 @@ const ProductContainer = () => {
     // }
 
     return (
-        <SafeAreaView flex={1} backgroundColor='#dcdde1' >
+        <SafeAreaView flex={1} backgroundColor='#dcdde1' marginTop={windowHeight*0.03} >
+            
             <Block row height={windowHeight * 0.08} backgroundColor='#fff' >
 
-                <Block height={windowHeight * 0.08} paddingHorizontal={5} marginHorizontal={5} row alignCenter radius={10} border={5} borderColor='grey' >
-                    <AntDesign name="search1" size={24} color="black" />
+                <Block height={windowHeight * 0.08} paddingHorizontal={5} marginHorizontal={5} row alignCenter radius={10} border={5} borderColor='#ffa801' >
+                    <AntDesign name="search1" size={24} color="#ffa801" />
                     <TextInput
                         placeholder='Bạn muốn tìm gì...'
                         style={{ height: '100%', marginHorizontal: 5, width: windowWidth * 0.7 }}
@@ -104,13 +107,13 @@ const ProductContainer = () => {
                 </Block>
                 <Block justifyCenter alignCenter >
                     <TouchableOpacity onPress={() => setIsFilter(!isFilter)} >
-                        <AntDesign name="filter" size={windowWidth * 0.1} color="black" />
+                        <AntDesign name="filter" size={windowWidth * 0.1} color="#ffa801" />
                     </TouchableOpacity>
                 </Block>
             </Block>
 
 
-            <Block height='78%' width='100%'  row >
+            <Block height={windowHeight*0.8} width='100%'  row >
                 {isFilter ? <Block backgroundColor='#f7b731' borderColor='#f7b731' height='100%' width='30%' borderRadius={10} border={5} >
                     <ProductFilter category={categories} isFilter={isFilter} setIsFilter={setIsFilter}
                         products={products} setProducts={setProducts} productsFilter={productsFilter}
@@ -124,6 +127,7 @@ const ProductContainer = () => {
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) =>
                             <ProductList
+                                isFilter={isFilter}
                                 key={item.id}
                                 item={item}
                             />
@@ -133,14 +137,21 @@ const ProductContainer = () => {
                                 <Banner />
                             </Block>
                         }
+                        ListFooterComponent={()=>{
+                            return(
+                            <Block height={50} width={windowWidth} backgroundColor='transparent' >
 
+                            </Block>
+                            )
+                            
+                        }}
                     /> : <Block backgroundColor='#fff' justifyCenter alignCenter  >
                         <Text>Không có sản phẩm</Text>
                     </Block>}
 
                 </Block>
             </Block>
-            <Block height='14%' marginHorizontal={windowHeight*0.02} backgroundColor='#dcdde1' />
+            <Block height={windowHeight*0.1} marginHorizontal={windowHeight*0.02} backgroundColor='#dcdde1' />
             {/* <Block>
                 {ModalFilter()}
             </Block> */}
