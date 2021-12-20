@@ -36,12 +36,7 @@ const ExtendsScreen = (props) => {
             iconName: 'message1',
             onPress: () => {}
         },
-        {
-            title: 'Luồng đăng nhập',
-            iconType: AntDesign,
-            iconName: 'message1',
-            onPress: () => props.navigation.navigate('SignIn')
-        }
+        
     ]
 
     return (

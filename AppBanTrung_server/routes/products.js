@@ -3,7 +3,16 @@ const router = express.Router();
 const {Product} = require('../models/product');
 const multer = require('multer');
 const { mongoose } = require('mongoose');
+const aws = require("aws-sdk");
+const multerS3 = require("multer-s3");
 
+
+
+const s3 = new aws.S3({
+    accessKeyId: process.env.S3_ACCESS_KEY,
+    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+    region:process.env.S3_BUCKET_REGION,
+})
 
 const FILE_TYPE_MAP = {
     'image/png':'png',
@@ -11,24 +20,23 @@ const FILE_TYPE_MAP = {
     'image/jpg':'jpg'
 }
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const isValid = FILE_TYPE_MAP[file.mimetype];
-        let uploadError = new Error('Ảnh không hợp lệ')
-        if(isValid){
-            uploadError = null
-        }
 
-      cb(uploadError, 'public/uploads')
-    },
-    filename: function (req, file, cb) {
-      const fileName = file.originalname.split(' ').join('-');
-      const extenstion = FILE_TYPE_MAP[file.mimetype]
-      cb(null, `${fileName}-${Date.now()}.${extenstion}`)
-    }
-  })
 
-  const uploadOptions = multer({ storage: storage })
+  const upload = (bucketName) => multer({ 
+      storage: multerS3({
+          s3,
+          bucket:bucketName,
+          metadata:function (req,file,cb){
+              cb(null,{fieldName: file.fieldname});
+          },
+          key:function (req,file,cb){
+            const fileName = file.originalname.split(' ').join('-');
+            const extenstion = FILE_TYPE_MAP[file.mimetype]
+            cb(null, `${fileName}-${Date.now()}.${extenstion}`)
+          }
+      })
+
+})
 
 router.get(`/`, (req,res)=>{
     // api/v1/products?categories=123,345;
@@ -153,12 +161,13 @@ router.get(`/get/Antuong/:count`, (req,res)=>{
    
 })
 
-router.post(`/`, uploadOptions.single('Image'),  (req,res)=>{
+router.post(`/`, upload("image-sanpham-trung").single('Image'),  (req,res)=>{
  
-    const fileName = req.file.filename
-    const basePath = `${req.protocol}://${req.get('host')}/public/upload/`;
+    
     
     const file = req.file;
+    const basePath = file.location;
+
     if(!file){
         return res.status(400).json({
         success:false,
@@ -170,7 +179,7 @@ router.post(`/`, uploadOptions.single('Image'),  (req,res)=>{
         Ten :req.body.Ten,
         MoTa: req.body.MoTa,
         MoTaChiTiet: req.body.MoTaChiTiet,
-        Image: `${basePath}${fileName}`,
+        Image: basePath,
         ThuongHieu: req.body.ThuongHieu,
         Gia:req.body.Gia,
         Loai:req.body.Loai,
@@ -189,7 +198,8 @@ router.post(`/`, uploadOptions.single('Image'),  (req,res)=>{
         return  res.status(201).json({
             success:true,
             message:'thêm mới 1 sản phẩm',
-            response:createdProduct
+            response:createdProduct,
+            data:req.body
         })    
     })).catch((err)=>{
         res.status(400).json({
@@ -199,20 +209,36 @@ router.post(`/`, uploadOptions.single('Image'),  (req,res)=>{
     })
 })
 
-router.put('/:id', (req,res)=>{
+router.put('/:id', upload("image-sanpham-trung").single('Image'), async (req,res)=>{
+   const prt = await Product.findById(req.params.id);
+   if(!prt) return res.status(404).json({
+       success:false,
+       message:"sản phẩm không tồn tại"
+   })
+
+   
+    const file = req.file;
+    let basePath;
+
+    if(file){
+        basePath= file.location;
+    }else{
+        basePath=prt.Image;
+    }
+
     Product.findByIdAndUpdate(req.params.id,{
         Ten :req.body.Ten,
         MoTa: req.body.MoTa,
-        MoTaChiTiet: req.body.MoTaChiTiet,
-        Image: req.body.Image,
+         MoTaChiTiet: req.body.MoTaChiTiet,
+        Image: basePath,
         Images: req.body.Images,
         ThuongHieu: req.body.ThuongHieu,
         Gia:req.body.Gia,
         Loai:req.body.Loai,
         TonKho:req.body.TonKho,
-        XepHang:req.body.XepHang,
-        LuotDanhGia: req.body.LuotDanhGia,
-        AnTuong: req.body.AnTuong,
+      //  XepHang:req.body.XepHang,
+       // LuotDanhGia: req.body.LuotDanhGia,
+       // AnTuong: req.body.AnTuong,
         
     },{
         new:true
@@ -227,7 +253,7 @@ router.put('/:id', (req,res)=>{
         res.status(201).json({
             success:true,
             message:'sửa thành công',
-            response:product
+            response:product,
         })
     }).catch(err=>{
         return res.status(400).json({
@@ -238,15 +264,14 @@ router.put('/:id', (req,res)=>{
     })
 })
 
-router.put(`/Images/:id`,uploadOptions.array('Images',10), (req,res)=>{
-    
+router.put(`/Images/:id`,upload("image-sanpham-trung").array('Images'), (req,res)=>{
+    // upload("image-sanpham-trung").single('Images')
     const files = req.files;
+    
     let imagesPaths = [];
-    const basePath = `${req.protocol}://${req.get('host')}/public/upload/`;
-
     if(files){
        files.map(file =>{
-         imagesPaths.push(`${basePath}${file.filename}`)  
+         imagesPaths.push(`${file.location}`)  
        })
     }
    
@@ -295,6 +320,8 @@ router.delete('/:id',(req,res)=>{
             error:err 
         })
     })
+
+   
 })
 
 module.exports = router;

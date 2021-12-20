@@ -139,7 +139,9 @@ router.post('/login',(req,res)=>{
                 message:'đăng nhập thành công',
                 response:{
                     TaiKhoan:user.TaiKhoan,
-                    token:token
+                    token:token,
+                    id:user.id,
+                    isAdmin:user.isAdmin
                 }
 
             })
@@ -180,5 +182,48 @@ router.delete('/:id',(req,res)=>{
         })
     })
 })
+
+router.put('/:id',  async (req,res)=>{
+    const prt = await User.findById(req.params.id);
+    if(!prt) return res.status(404).json({
+        success:false,
+        message:"Người dùng không tồn tại"
+    })
+ 
+     User.findByIdAndUpdate(req.params.id,{
+         Ten :req.body.Ten,
+         DiaChi: req.body.DiaChi,
+         PhuongXa: req.body.PhuongXa,
+         QuanHuyen: req.body.QuanHuyen,
+         TinhTP: req.body.TinhTP,
+         SoDienThoai: req.body.SoDienThoai,
+         DiaChiGiaoHang1:req.body.DiaChiGiaoHang1,
+         DiaChiGiaoHang2:req.body.DiaChiGiaoHang2,
+        
+         
+     },{
+         new:true
+     }).then(user =>{
+         if(!user){
+             return res.status(404).json({
+                 success:false,
+                 message:'người dùng không tồn tại'
+             })
+         }
+     
+         res.status(201).json({
+             success:true,
+             message:'sửa thành công',
+             response:user,
+             
+         })
+     }).catch(err=>{
+         return res.status(400).json({
+             success:false,
+             message:'',
+             error:err
+         })
+     })
+ })
 
 module.exports = router;

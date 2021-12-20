@@ -10,7 +10,7 @@ const orderSchema = mongoose.Schema({
         type:String,
         required:true
     },
-    MaBuuDien:{
+    LoaiGiaoDich:{
         type:String,
         required:true
     },
@@ -21,10 +21,11 @@ const orderSchema = mongoose.Schema({
     TrangThai:{
         type:String,
         required:true,
-        default:'ChuaGiaiQuyet',
+        default:'Đang xử lý',
     },
     TongTien:{
-        type:Number
+        type:Number,
+        default:0
     },
     TaiKhoan:{
         type:mongoose.Schema.Types.ObjectId,

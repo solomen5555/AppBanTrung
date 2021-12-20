@@ -3,9 +3,13 @@ import thunkMiddleware from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
 
 import cartReducer from './reducers/cartReducer';
+import AppLoadingReducer from './reducers/appLoadingReducer';
+import AuthReducer from './reducers/authReducer';
 
 const reducers = combineReducers({
-    cartReducer: cartReducer
+    cartReducer: cartReducer,
+    appLoadingReducer:AppLoadingReducer,
+    
 });
 
 const store = createStore(

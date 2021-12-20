@@ -4,7 +4,9 @@ const {Order} = require('../models/order');
 const { OrderItem } = require('../models/orderItem');
 
 router.get(`/`, (req,res)=>{
-     Order.find().populate('TaiKhoan','Ten').sort({'NgayMua':-1}).then(orderList=>{
+     Order.find().populate('TaiKhoan','Ten')
+     .populate({path:'DsSanPham',populate:{path :'SanPham',populate:'Loai'}}).sort({'NgayMua':-1})
+     .then(orderList=>{
         if(orderList.length<=0){
            return res.status(404).json({
                 success:false,
@@ -49,6 +51,32 @@ router.get(`/:id`, (req,res)=>{
              error:err
          })
      })
+   
+})
+
+router.get(`/byiduser/:id`, (req,res)=>{
+    let filter = {TaiKhoan : req.params.id}
+    Order.find(filter).populate("TaiKhoan","Ten")
+    .populate({path:'DsSanPham',populate:{path :'SanPham',populate:'Loai'}})
+    .then(order=>{
+       if(order.length <=0 ){
+      return  res.status(404).json({
+               success:false,
+               message:'không lấy được danh sách hóa đơn'
+           })
+       }
+      return res.status(200).json({
+          success:true,
+          message:'lấy danh sách hóa thành công',
+          response:order
+      });
+    }).catch(err=>{
+        return res.status(400).json({
+            success:false,
+            message:'',
+            error:err
+        })
+    })
    
 })
 
@@ -126,10 +154,10 @@ router.post(`/`, async (req,res)=>{
     let order = new Order({
         DsSanPham:DsSanPham1,
         DiaChiGiaoHang:req.body.DiaChiGiaoHang,
-        MaBuuDien:req.body.MaBuuDien,
+        LoaiGiaoDich:req.body.LoaiGiaoDich,
         SoDienThoai:req.body.SoDienThoai,
         TrangThai:req.body.TrangThai,
-        TongTien:TongTien1,
+        TongTien:req.body.TongTien,
         TaiKhoan:req.body.TaiKhoan
     })
 

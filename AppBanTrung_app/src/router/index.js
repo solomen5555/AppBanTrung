@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useEffect } from 'react';
+import React, { useContext, useRef, useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Block, Text } from '../components';
 import { FontAwesome, Ionicons,AntDesign } from '@expo/vector-icons';
@@ -16,13 +16,22 @@ import Delivering from '../screen/StatusProduct/Delivering';
 import Bought from '../screen/StatusProduct/Bought';
 import Processing from '../screen/StatusProduct/Processing';
 import ExtendsScreen from '../screen/Extends/ExtendsScreen';
-import SignUp from '../screen/Admin/SignUp';
-import SignIn from '../screen/Admin/SignIn';
-import Profile from '../screen/Admin/Profile';
+import SignUp from '../screen/User/SignUp';
+import SignIn from '../screen/User/SignIn';
+import Profile from '../screen/User/Profile';
+import { useSelector, useDispatch } from 'react-redux';
+import Products from '../screen/Admin/Products';
+import Categories from '../screen/Admin/Categories';
+import Orders from '../screen/Admin/Orders';
+import ProductForm from '../screen/Admin/component/ProductForm';
+import AuthGlobal from '../Context/store/AuthGlobal';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import EditProfile from '../screen/User/EditProfile';
 
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
+
 
 const TabTitle = (props) => {
   //  console.log('prop title', props)
@@ -77,6 +86,51 @@ const TabButton = (props) => {
     )
 }
 
+ const AuthStack = createStackNavigator();
+ const AuthNavigation = () =>{
+     return (
+        <AuthStack.Navigator>
+           <AuthStack.Screen name='SignIn' component={SignIn} 
+            options={{
+                headerShown:false
+            }} /> 
+            <AuthStack.Screen name='SignUp' component={SignUp} 
+            options={{
+                headerShown:false
+            }} />  
+            
+        </AuthStack.Navigator>
+    )
+}
+
+const AdminStack = createStackNavigator();
+const AdminNavigation = () => {
+    return (
+        <AdminStack.Navigator>
+            <AdminStack.Screen name="Products"  component={Products} 
+                options={{
+                    headerShown:false
+                }}
+            />
+            <AdminStack.Screen name="Categories"  component={Categories} 
+                 options={{
+                    headerShown:false
+                }}
+            />
+            <AdminStack.Screen name="Orders"  component={Orders} 
+              options={{
+                headerShown:false
+            }}
+            />
+            <AdminStack.Screen name="ProductForm"  component={ProductForm}
+                  options={{
+                    headerShown:false
+                }}
+            />
+        </AdminStack.Navigator>
+    )
+}
+
 const HomeStack = createStackNavigator();
 const HomeNavigation = () => {
     return (
@@ -123,7 +177,7 @@ const ExtendNavigation = () => {
             options={{
                 headerShown:false
             }} />
-             <ExtendStack.Screen name='SignIn' component={SignIn} 
+                 <ExtendStack.Screen name='SignIn' component={SignIn} 
             options={{
                 headerShown:false
             }} /> 
@@ -134,7 +188,11 @@ const ExtendNavigation = () => {
              <ExtendStack.Screen name='Profile' component={Profile} 
             options={{
                 headerShown:false
-            }} />      
+            }} /> 
+             <ExtendStack.Screen name='EditProfile' component={EditProfile} 
+            options={{
+                headerShown:false
+            }} /> 
         </ExtendStack.Navigator>
     )
 }
@@ -164,10 +222,10 @@ const CheckOutNavigation = () => {
             <CheckOutTab.Screen name='Processing' component={Processing}
                 options={{
                    
-                    title: (props) => <TabTitle {...props} item={'Đang chờ'} />
+                    title: (props) => <TabTitle {...props} item={'Hóa đơn'} />
                 }}
             />
-            <CheckOutTab.Screen name='Delivering' component={Delivering}
+            {/* <CheckOutTab.Screen name='Delivering' component={Delivering}
                 options={{
                     
                     title: (props) => <TabTitle {...props} item={'Đang giao'} />
@@ -178,23 +236,64 @@ const CheckOutNavigation = () => {
                    
                     title: (props) => <TabTitle {...props} item={'Đã mua'} />
                 }}
-            />
+            /> */}
            
         </CheckOutTab.Navigator>
     )
 }
 
 
-const TabArr = [
-    { route: 'Home', label: 'Home', type: Ionicons, activeIcon: 'home', isActiveIcon: 'home-outline', component: HomeNavigation, },
-    { route: 'Carts', label: 'Carts', type: Ionicons, activeIcon: 'cart', isActiveIcon: 'cart-outline', component: CartNavigation, IconMore: CartIcon },
-    { route: 'Extend', label: 'Extend', type:AntDesign, activeIcon: 'windows', isActiveIcon: 'windowso', component: ExtendNavigation },
-]
+
+
 
 
 
 const Tab = createBottomTabNavigator();
 const Main = () => {
+    const context = useContext(AuthGlobal);
+    const [TabArr,setTabArr] = useState([
+        { route: 'Home', label: 'Home', type: Ionicons, activeIcon: 'home', isActiveIcon: 'home-outline', component: HomeNavigation, },
+        { route: 'Carts', label: 'Carts', type: Ionicons, activeIcon: 'cart', isActiveIcon: 'cart-outline', component: CartNavigation, IconMore: CartIcon },
+        { route: 'Extend', label: 'Extend', type:AntDesign, activeIcon: 'windows', isActiveIcon: 'windowso', component: ExtendNavigation },
+    ]);
+    //console.log('contexttttttttt',context.stateUser.user.isAdmin);
+
+    useEffect(()=>{
+        AsyncStorage.getItem('isAdmin').then(res=>{
+            if(res=='true'){
+                setTabArr([
+                    { route: 'Home', label: 'Home', type: Ionicons, activeIcon: 'home', isActiveIcon: 'home-outline', component: HomeNavigation, },
+                    { route: 'Carts', label: 'Carts', type: Ionicons, activeIcon: 'cart', isActiveIcon: 'cart-outline', component: CartNavigation, IconMore: CartIcon },
+                    { route: 'Admin', label: 'Admin', type:Ionicons, activeIcon: 'settings', isActiveIcon: 'settings-outline', component: AdminNavigation },
+                    { route: 'Extend', label: 'Extend', type:AntDesign, activeIcon: 'windows', isActiveIcon: 'windowso', component: ExtendNavigation },
+                ])
+            }else{
+                setTabArr([
+                    { route: 'Home', label: 'Home', type: Ionicons, activeIcon: 'home', isActiveIcon: 'home-outline', component: HomeNavigation, },
+                    { route: 'Carts', label: 'Carts', type: Ionicons, activeIcon: 'cart', isActiveIcon: 'cart-outline', component: CartNavigation, IconMore: CartIcon },
+                    { route: 'Extend', label: 'Extend', type:AntDesign, activeIcon: 'windows', isActiveIcon: 'windowso', component: ExtendNavigation },
+                ])
+            }
+        })
+    },[context?.stateUser?.user?.isAdmin])
+
+    // const TabArr =  context.stateUser.user.isAdmin==true ? [
+    //     { route: 'Home', label: 'Home', type: Ionicons, activeIcon: 'home', isActiveIcon: 'home-outline', component: HomeNavigation, },
+    //     { route: 'Carts', label: 'Carts', type: Ionicons, activeIcon: 'cart', isActiveIcon: 'cart-outline', component: CartNavigation, IconMore: CartIcon },
+    //     { route: 'Admin', label: 'Admin', type:Ionicons, activeIcon: 'settings', isActiveIcon: 'settings-outline', component: AdminNavigation },
+    //     { route: 'Extend', label: 'Extend', type:AntDesign, activeIcon: 'windows', isActiveIcon: 'windowso', component: ExtendNavigation },
+    // ] : [
+    //     { route: 'Home', label: 'Home', type: Ionicons, activeIcon: 'home', isActiveIcon: 'home-outline', component: HomeNavigation, },
+    //     { route: 'Carts', label: 'Carts', type: Ionicons, activeIcon: 'cart', isActiveIcon: 'cart-outline', component: CartNavigation, IconMore: CartIcon },
+    //     { route: 'Extend', label: 'Extend', type:AntDesign, activeIcon: 'windows', isActiveIcon: 'windowso', component: ExtendNavigation },
+    // ]
+    // const TabArr =  [
+    //     { route: 'Home', label: 'Home', type: Ionicons, activeIcon: 'home', isActiveIcon: 'home-outline', component: HomeNavigation, },
+    //     { route: 'Carts', label: 'Carts', type: Ionicons, activeIcon: 'cart', isActiveIcon: 'cart-outline', component: CartNavigation, IconMore: CartIcon },
+    //     { route: 'Admin', label: 'Admin', type:Ionicons, activeIcon: 'settings', isActiveIcon: 'settings-outline', component: AdminNavigation },
+    //     { route: 'Extend', label: 'Extend', type:AntDesign, activeIcon: 'windows', isActiveIcon: 'windowso', component: ExtendNavigation },
+    // ] 
+
     return (
         <Tab.Navigator
             initialRouteName='HomeTab'
@@ -214,7 +313,7 @@ const Main = () => {
                 }
             }}
         >
-            {TabArr.map((item, index) => {
+            {TabArr?.map((item, index) => {
                 return (
                     <Tab.Screen key={index.toString()} name={item.route} component={item.component}
                         options={{

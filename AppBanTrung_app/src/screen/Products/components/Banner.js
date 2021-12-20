@@ -24,7 +24,7 @@ const Banner = () => {
     return (
         <ScrollView>
 
-        <Block flex={1} backgroundColor='#f6e58d' >
+        <Block flex={1} backgroundColor='orange' >
             <Block width={windowWidth} alignCenter marginVertical={10}  >
                 <Swiper showsButtons={false} autoplay={true}
                     autoplayTimeout={2} height={windowHeight / 4}

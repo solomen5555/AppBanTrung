@@ -3,13 +3,14 @@ import { Block, Button } from '../../components';
 import { Image, ScrollView, Text, SafeAreaView, Dimensions, TouchableOpacity } from 'react-native';
 import { Lobster_400Regular } from '@expo-google-fonts/lobster';
 import { GreatVibes_400Regular } from '@expo-google-fonts/great-vibes';
-
 import { useFonts } from 'expo-font';
-import AppLoading from 'expo-app-loading';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Fontisto } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Fontisto, AntDesign } from '@expo/vector-icons';
+
 import formatMoney from '../../hooks/fomatMoney';
+import * as actions from '../../Redux/action/cartAction';
 import { navigate } from '../../router/NavigationService';
+import { useDispatch, useSelector } from 'react-redux';
+import  Toast from 'react-native-toast-message';
 
 
 const windowHeight = Dimensions.get('window').height;
@@ -21,34 +22,63 @@ const ProductDetail = (props) => {
     const [fontsLoaded, error] = useFonts({
         Lobster_400Regular,
         GreatVibes_400Regular,
-    })
+    });
+    const dispatch = useDispatch();
+    let dataCart = useSelector(state => state.cartReducer.cart);
+    
 
-    // const [fontsLoaded1,error1] =  useFonts({ 
-    //     GreatVibes_400Regular,
-    // })
 
+    //console.log("productdetail",props)
 
-    console.log(fontsLoaded)
+    const AddProduct =(item)=>{
+        dispatch(actions.addCart(item,{cart : dataCart}))
+    }
 
-    // if(!fontsLoaded){
-    //     return <AppLoading />
-    // }
+    const [product, setProduct] = useState(props?.route?.params?.item);
+    const [mota,setMota] = useState([]);
 
-    const [product, setProduct] = useState(props.route.params.item);
+    useEffect(()=>{
+        let mt = product.MoTa.split('.');
+        //console.log("ProductDetail","Mota",mt)
+        setMota(mt);
+
+        return () => {
+            setMota([]);
+        }
+
+    },[product])
+    
     // console.log(product);
     return (
-        <SafeAreaView style={{ position: 'absolute', height: '100%' }} >
-            <Button position='absolute' height='10%' width={windowWidth * 0.2} row backgroundColor='#fff' shadow={10} marginHorizontal={windowWidth * 0.05} radius={20} paddingHorizontal={10} alignCenter justifyCenter marginLeft={windowWidth*0.78} marginTop={windowHeight*0.05} 
-            onPress={()=>props.navigation.goBack()}
+        <SafeAreaView style={{ position: 'absolute', height: '100%',marginTop:windowHeight*0.035 }} >
+            <Block height='10%' row backgroundColor='orange' justifyContent='space-between' alignCenter  >
+            <Button marginLeft={windowWidth * 0.02} onPress={() => props.navigation.navigate(props?.route?.params?.backScreen)} >
+             <AntDesign name="left" size={35} color="white" />
+            </Button>
+            <Block>
+                <Text style={{fontSize:25,color:'white'}} >{formatMoney(product.Gia)}đ/chục</Text>
+            </Block>
+            <Button position='absolute' height='90%' width={windowWidth * 0.2} row backgroundColor='#fff' shadow={10} marginHorizontal={windowWidth * 0.05} radius={20}  alignCenter justifyCenter   
+            onPress={()=> {
+                AddProduct(product)
+                Toast.show({
+                    topOffset:60,
+                    type:'success',
+                    text1:`${product.Ten} đã được thêm vào giỏ hàng.` ,
+                    text2:'Đến giỏ hàng để tiến hành thanh toán.'
+                })
+            }}
             >
             <Fontisto name="shopping-basket-add" size={windowWidth * 0.1} color="#f0932b" />
             </Button>
-            <Block height='90%' >
-            <ScrollView >
+            </Block>
+            
+            <Block height='78%' >
+            <ScrollView height='100%' >
                 <Block height={windowHeight*0.5} >
                     <Image
                         source={{
-                            uri: product.image ? product.image : 'https://media.healthplus.vn/thumb_x650x382/Images/Uploaded/Share/2017/09/08/nhung-loai-trung-nen-an-de-tot-cho-suc-khoe11504842188.jpg'
+                            uri: product.Image ? product.Image : 'https://media.healthplus.vn/thumb_x650x382/Images/Uploaded/Share/2017/09/08/nhung-loai-trung-nen-an-de-tot-cho-suc-khoe11504842188.jpg'
                         }}
                         resizeMode="contain"
                         style={{
@@ -57,20 +87,31 @@ const ProductDetail = (props) => {
                         }}
                     />
                 </Block>
-                <Block justifyCenter alignCenter height='5%' >
-                    {!fontsLoaded ? null : <Text style={{ fontFamily: 'Lobster_400Regular', fontSize: 40 }} >{product.Ten}</Text>}
+                <Block justifyCenter alignCenter height='5%' marginTop={windowHeight*0.05} >
+                    {!fontsLoaded ? null : <Text style={{ fontFamily: 'Lobster_400Regular', fontSize: 40 }} >{product?.Ten}</Text>}
                 </Block>
-                <Block justifyCenter alignCenter row height='5%'  >
+                <Block justifyCenter alignCenter row height='5%' marginTop={windowHeight*0.02} >
                     <MaterialCommunityIcons name="egg-easter" size={24} color="#f39c12" />
-                    {!fontsLoaded ? null : <Text style={{ fontFamily: 'GreatVibes_400Regular', fontSize: 20 }} >{product.ThuongHieu}</Text>}
+                    {!fontsLoaded ? null : <Text style={{ fontFamily: 'GreatVibes_400Regular', fontSize: 20 }} >{product?.ThuongHieu}</Text>}
                     <MaterialCommunityIcons name="egg-easter" size={24} color="#f39c12" />
                 </Block>
-                <Text style={{fontSize:50}} >aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-                    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                <Block marginBottom={70}  >
+                <Text style={{fontSize:20}} >
+                    Mô tả :
                 </Text>
+                <Block marginTop={windowHeight*0.02} >
+                     {mota ? mota.map((item,index)=>{
+                         return(
+                             <Block key={index.toString()} paddingVertical={2} justifyCenter  >
+                                <Text style={{fontSize:16}} > - {item}.</Text>
+                             </Block>
+                         )
+                     }): null}   
+                </Block>
+                </Block>
+                
                
-                <Block height='14%' marginHorizontal={windowHeight*0.02} backgroundColor='#dcdde1' /> 
+               
             </ScrollView>
             </Block>
             

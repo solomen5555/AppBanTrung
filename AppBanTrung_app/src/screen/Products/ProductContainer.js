@@ -1,18 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
     StyleSheet, FlatList, TextInput, Dimensions, SafeAreaView, KeyboardAvoidingView,
     Platform, Modal, Pressable, TouchableOpacity
 } from 'react-native';
 import {
     Block, Text
-} from '../../components'
+} from '../../components';
 
 import ProductList from './components/ProductList';
 import { AntDesign } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 
 import Banner from './components/Banner';
 import ProductFilter from './components/ProdctFilter';
 import { Header } from '../../components'
+import AppLoading from '../../components/AppLoading';
+import { categoryApi, productApi } from '../../api';
+import { onIsLoadingTrue, onIsLoadingFalse } from '../../Redux/action/appLoadingAction';
+import { useDispatch } from 'react-redux';
 
 const data = require('../../assets/data/products.json');
 const category = require('../../assets/data/categories.json')
@@ -25,26 +30,70 @@ const ProductContainer = () => {
     const [productsFilter, setProductsFilter] = useState([]);
     const [categories, setCategories] = useState([]);
     const [active, setActive] = useState();
-    const [initialState, setInitialState] = useState([]);
     const [isFilter, setIsFilter] = useState(false);
     const [modalFilter, setModalFilter] = useState(false);
+    const [isLoading1,setIsLoading1] = useState(false);
 
-    useEffect(() => {
-        setProducts(data);
-        setProductsFilter(data);
-        setCategories(category);
+    const dispatch = useDispatch();
+
+    useFocusEffect((
+        useCallback(
+            ()=>{
+               
+        
+        
         setActive(-1);
-        setInitialState(data);
+        
+        GetAllCategories();
+        GetAllProducts();
         return () => {
             setProducts([]);
             setCategories([]);
             setActive();
-            setInitialState([]);
+            
         }
 
-    }, [])
+    },[])))
 
-  //  console.log('isFilter', isFilter)
+  // console.log('isFilter', isLoading1)
+
+  const GetAllCategories = async () => {
+      dispatch(onIsLoadingTrue())
+      try {
+        let data = await categoryApi.GetAllCategories();
+
+      //  console.log('dataCategory',data.data)
+        if(data.data.success==true){
+            setCategories(data.data.response)
+            dispatch(onIsLoadingFalse())
+        }
+        dispatch(onIsLoadingFalse())
+      }catch (err){
+        console.log(err)
+        dispatch(onIsLoadingFalse())
+      }
+      
+   }
+
+   const GetAllProducts = async () => {
+    dispatch(onIsLoadingTrue())
+    try {
+      let data = await productApi.GetAllProducts();
+
+     // console.log('dataProduct',data.data.response)
+      if(data.data.success==true){
+          setProducts(data.data.response)
+          setProductsFilter(data.data.response);
+          dispatch(onIsLoadingFalse())
+      }
+      
+      dispatch(onIsLoadingFalse())
+    }catch (err){
+      console.log(err)
+      dispatch(onIsLoadingFalse())
+    }
+    
+ }
 
     const searchProduct = keyword => {
       //  console.log('keyword', keyword)
@@ -61,34 +110,13 @@ const ProductContainer = () => {
 
     };
 
-    // const ModalFilter = () =>{
-    //     return (
-    //         <Block  flex={1} justifyCenter alignCenter marginTop ={22} >
-    //           <Modal
-    //             animationType="slide"
-    //             transparent={true}
-    //             visible={modalFilter}
-    //             onRequestClose={() => {
-    //              // Alert.alert("Modal has been closed.");
-    //               setModalVisible(!modalFilter);
-    //             }}
-    //           >
-    //             <Block height={windowHeight*0.8} width={windowWidth*0.3} marginTop={windowHeight*0.2} backgroundColor='#fff' >
-
-    //             </Block>
-    //           </Modal>
-    //           <Pressable
-
-    //             onPress={() => setModalVisible(true)}
-    //           >
-    //             <Text >Show Modal</Text>
-    //           </Pressable>
-    //         </Block>
-    //       );
-    // }
+    
 
     return (
-        <SafeAreaView flex={1} backgroundColor='#dcdde1' marginTop={windowHeight*0.03} >
+        <SafeAreaView flex={1} >
+        {isLoading1 ? <AppLoading /> : 
+        <SafeAreaView flex={1} backgroundColor='#dcdde1' marginTop={windowHeight*0.035} >
+            
             
             <Block row height={windowHeight * 0.08} backgroundColor='#fff' >
 
@@ -157,8 +185,8 @@ const ProductContainer = () => {
             </Block> */}
 
         </SafeAreaView>
-
-
+    }
+        </SafeAreaView>
 
 
     )

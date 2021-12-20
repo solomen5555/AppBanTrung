@@ -15,7 +15,9 @@ app.options('*',cors());
 
 
 //middleware
-app.use(bodyParser.json());
+
+app.use(express.json())
+
 app.use(morgan('tiny'));
 app.use(authJwt());
 app.use('/public/uploads',express.static(__dirname +'/public/uploads' ))
@@ -54,7 +56,7 @@ mongoose.connect(process.env.CONNECTION_STRING,{
     console.log(err);
 })
 
-app.listen(process.env.PORT || 3000,()=>{
+app.listen(process.env.PORT,()=>{
     console.log(api);
     console.log('chạy thành công server '+ process.env.PORT);
 })

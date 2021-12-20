@@ -7,7 +7,7 @@ const ProductFilter = (props) => {
     const filterProducts = (item) =>{
         if(item != null || item != undefined){
             let productsfiltered = props.productsFilter.filter(value=>
-                value.PhanLoai.$oid == item._id.$oid
+                value.Loai._id == item._id
              )
                 props.setProducts(productsfiltered)
     
@@ -32,7 +32,7 @@ const ProductFilter = (props) => {
                      >
                         <Block margin={5} height={50} width='90%' backgroundColor='#fff' alignCenter justifyCenter radius={10} shadow={20} >
                             <Text>
-                                {item.name}
+                                {item.Ten}
                             </Text>
 
                         </Block>

@@ -12,9 +12,11 @@ function authJwt(){
             {url:/\/public\/uploads(.*)/,method:['GET','OPTIONS'] } ,
            {url:/\/trungtinhyeu\/api\/products(.*)/,method:['GET','OPTIONS'] } ,
            {url:/\/trungtinhyeu\/api\/categories(.*)/,method:['GET','OPTIONS'] } ,
+           {url:/\/trungtinhyeu\/api\/users(.*)/,method:['GET','OPTIONS',"PUT"] } ,
+           {url:/\/trungtinhyeu\/api\/orders(.*)/,method:['GET','OPTIONS',"PUT","POST","DELETE"] } ,
            `${api}/users/login`,
            `${api}/users/register`,
-          
+           `${api}/users`,
         ]
     })
 }
