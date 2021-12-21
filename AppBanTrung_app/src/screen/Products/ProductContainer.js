@@ -29,11 +29,8 @@ const ProductContainer = () => {
     const [products, setProducts] = useState([]);
     const [productsFilter, setProductsFilter] = useState([]);
     const [categories, setCategories] = useState([]);
-    const [active, setActive] = useState();
     const [isFilter, setIsFilter] = useState(false);
-    const [modalFilter, setModalFilter] = useState(false);
-    const [isLoading1,setIsLoading1] = useState(false);
-
+    
     const dispatch = useDispatch();
 
     useFocusEffect((
@@ -42,20 +39,19 @@ const ProductContainer = () => {
                
         
         
-        setActive(-1);
+        
         
         GetAllCategories();
         GetAllProducts();
         return () => {
             setProducts([]);
             setCategories([]);
-            setActive();
-            
+            setProductsFilter([])
         }
 
     },[])))
 
-  // console.log('isFilter', isLoading1)
+ 
 
   const GetAllCategories = async () => {
       dispatch(onIsLoadingTrue())
@@ -114,7 +110,7 @@ const ProductContainer = () => {
 
     return (
         <SafeAreaView flex={1} >
-        {isLoading1 ? <AppLoading /> : 
+       
         <SafeAreaView flex={1} backgroundColor='#dcdde1' marginTop={windowHeight*0.035} >
             
             
@@ -185,7 +181,6 @@ const ProductContainer = () => {
             </Block> */}
 
         </SafeAreaView>
-    }
         </SafeAreaView>
 
 

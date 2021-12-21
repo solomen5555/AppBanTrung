@@ -42,6 +42,11 @@ const Processing = (props) => {
         
     }).catch(err=>console.log(err))
 
+    return () =>{
+        setOrders([]);
+        setOrdersOri([])
+    }
+
     }, [isFocused])
     console.log('oderrrrrrrList',orders);
 

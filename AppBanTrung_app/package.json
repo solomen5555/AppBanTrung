@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@expo-google-fonts/alex-brush": "^0.2.0",
     "@expo-google-fonts/great-vibes": "^0.2.0",
     "@expo-google-fonts/italianno": "^0.2.0",
     "@expo-google-fonts/lobster": "^0.2.0",

@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { authApi, phoneApi } from '../../api';
 import AlertMessage from '../../components/AlertMessage';
 import { navigate } from '../../router/NavigationService';
+import Toast from "react-native-toast-message";
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -135,8 +136,19 @@ const SignUp = (props) => {
       dispatch(onIsLoadingTrue())
       try {
           let data = await phoneApi.SendOtp(soDienThoai);
-          setInfo({...info,requestId:data.data.data.requestId})
-          dispatch(onIsLoadingFalse())
+          if(data?.data?.data){
+            setInfo({...info,requestId:data.data.data.requestId})
+            dispatch(onIsLoadingFalse())
+          }else{
+            dispatch(onIsLoadingFalse())
+            Toast.show({
+            topOffset: 60,
+            type: 'error',
+            text1: `Có lỗi xảy ra.`,
+            text2: 'Xin vui lòng thử lại sau !.'
+        })
+          }
+          
           console.log('mã phone',data.data);
       }catch (err){
         dispatch(onIsLoadingFalse())

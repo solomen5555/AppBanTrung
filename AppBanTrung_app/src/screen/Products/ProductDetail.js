@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Block, Button } from '../../components';
 import { Image, ScrollView, Text, SafeAreaView, Dimensions, TouchableOpacity } from 'react-native';
 import { Lobster_400Regular } from '@expo-google-fonts/lobster';
-import { GreatVibes_400Regular } from '@expo-google-fonts/great-vibes';
+import { 
+    AlexBrush_400Regular 
+  } from '@expo-google-fonts/alex-brush'
 import { useFonts } from 'expo-font';
 import { MaterialCommunityIcons, Fontisto, AntDesign } from '@expo/vector-icons';
 
@@ -21,7 +23,7 @@ const ProductDetail = (props) => {
 
     const [fontsLoaded, error] = useFonts({
         Lobster_400Regular,
-        GreatVibes_400Regular,
+        AlexBrush_400Regular
     });
     const dispatch = useDispatch();
     let dataCart = useSelector(state => state.cartReducer.cart);
@@ -92,7 +94,7 @@ const ProductDetail = (props) => {
                 </Block>
                 <Block justifyCenter alignCenter row height='5%' marginTop={windowHeight*0.02} >
                     <MaterialCommunityIcons name="egg-easter" size={24} color="#f39c12" />
-                    {!fontsLoaded ? null : <Text style={{ fontFamily: 'GreatVibes_400Regular', fontSize: 20 }} >{product?.ThuongHieu}</Text>}
+                    {!fontsLoaded ? null : <Text style={{fontSize: 20 }} >{product?.ThuongHieu}</Text>}
                     <MaterialCommunityIcons name="egg-easter" size={24} color="#f39c12" />
                 </Block>
                 <Block marginBottom={70}  >
